@@ -38,7 +38,7 @@ function Show-DirectoryTree {
   begin {
     # Validación de ruta
     if (-not (Test-Path $Path)) {
-      Write-Error "El directorio '$Path' no existe."
+      Write-Error "Directory '$Path' does not exist."
       return
     }
 
@@ -135,7 +135,7 @@ function Show-DirectoryTree {
     if ($IndentLevel -eq 0) {
       $rootInfo = "📁 $([System.IO.Path]::GetFileName($Path))"
       if ($ShowLastModified) {
-        $rootInfo += " (Última modificación: $((Get-Item $Path).LastWriteTime))"
+        $rootInfo += " (Modified: $((Get-Item $Path).LastWriteTime))"
       }
       Write-Output $rootInfo
           
@@ -170,7 +170,7 @@ function Show-DirectoryTree {
         # Es un directorio
         $dirInfo = "$indent$connector📁 $($item.Name)"
         if ($ShowLastModified) {
-          $dirInfo += " (Última modificación: $($item.LastWriteTime))"
+          $dirInfo += " (Modified: $($item.LastWriteTime))"
         }
               
         Write-Output $dirInfo
@@ -206,7 +206,7 @@ function Show-DirectoryTree {
           $fileInfo += " ($(Format-FileSize $item.Length))"
         }
         if ($ShowLastModified) {
-          $fileInfo += " (Última modificación: $($item.LastWriteTime))"
+          $fileInfo += " (Modified: $($item.LastWriteTime))"
         }
               
         Write-Output $fileInfo
