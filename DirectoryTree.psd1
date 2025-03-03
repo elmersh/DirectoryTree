@@ -1,6 +1,6 @@
 @{
   RootModule        = 'DirectoryTree.psm1'
-  ModuleVersion     = '1.0.1'
+  ModuleVersion     = '1.0.2'
   GUID              = '79822dfd-1e7e-4f92-9b9b-bb557a726b3b'
   Author            = 'Elmer S.'
   Description       = 'A directory tree viewer with icons and formatting options'
