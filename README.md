@@ -26,7 +26,7 @@ Install-Module -Name DirectoryTree -Scope CurrentUser
 Or manually:
 
 ```powershell
-git clone https://github.com/yourusername/DirectoryTree
+git clone https://github.com/elmersh/DirectoryTree
 cd DirectoryTree
 # Import for current session
 Import-Module .\DirectoryTree.psd1

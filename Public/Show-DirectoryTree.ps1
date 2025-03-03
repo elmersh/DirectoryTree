@@ -29,7 +29,7 @@ function Show-DirectoryTree {
     [int]$CurrentDepth = 0,
       
     [Parameter(DontShow)]
-    [int]$IndentLevel = 0,
+    [string]$Indent = "",
       
     [Parameter(DontShow)]
     [bool]$IsLast = $false
@@ -132,7 +132,7 @@ function Show-DirectoryTree {
 
   process {
     # Si es el primer nivel, mostrar el nombre del directorio raíz
-    if ($IndentLevel -eq 0) {
+    if ($CurrentDepth -eq 0) {
       $rootInfo = "📁 $([System.IO.Path]::GetFileName($Path))"
       if ($ShowLastModified) {
         $rootInfo += " (Modified: $((Get-Item $Path).LastWriteTime))"
@@ -150,9 +150,6 @@ function Show-DirectoryTree {
       return
     }
 
-    # Preparar la indentación
-    $indent = "│   " * $IndentLevel
-
     # Obtener items del directorio con filtros
     $items = Get-ChildItem -Path $Path -Force:$ShowHidden | Where-Object { 
           ($ShowHidden -or !$_.Attributes.HasFlag([System.IO.FileAttributes]::Hidden)) -and
@@ -168,7 +165,7 @@ function Show-DirectoryTree {
           
       if ($item.PSIsContainer) {
         # Es un directorio
-        $dirInfo = "$indent$connector📁 $($item.Name)"
+        $dirInfo = "$Indent$connector📁 $($item.Name)"
         if ($ShowLastModified) {
           $dirInfo += " (Modified: $($item.LastWriteTime))"
         }
@@ -178,8 +175,10 @@ function Show-DirectoryTree {
           $dirInfo | Out-File -FilePath $OutputFile -Append
         }
 
+        # Calculamos la nueva indentación para los hijos
+        $childIndent = if ($isLastItem) { "$Indent    " } else { "$Indent│   " }
+        
         # Recursión para subdirectorios
-        $newIndent = if ($isLastItem) { $IndentLevel } else { $IndentLevel + 1 }
         Show-DirectoryTree `
           -Path $item.FullName `
           -ExcludeFolders $ExcludeFolders `
@@ -190,7 +189,7 @@ function Show-DirectoryTree {
           -ShowLastModified:$ShowLastModified `
           -MaxDepth $MaxDepth `
           -CurrentDepth ($CurrentDepth + 1) `
-          -IndentLevel $newIndent `
+          -Indent $childIndent `
           -IsLast $isLastItem
       }
       else {
@@ -200,7 +199,7 @@ function Show-DirectoryTree {
           $icon = $fileIcons["default"]
         }
               
-        $fileInfo = "$indent$connector$icon $($item.Name)"
+        $fileInfo = "$Indent$connector$icon $($item.Name)"
               
         if ($ShowFileSize) {
           $fileInfo += " ($(Format-FileSize $item.Length))"
